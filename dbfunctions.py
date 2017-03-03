@@ -11,21 +11,34 @@ import re
 def createpick(filename):
     config = get_config()
     connect_string = 'DRIVER={SQL Server};SERVER='+config[0]+';DATABASE='+config[1]+';UID='+config[2]+';PWD='+config[3]
-    stalmic = pyodbc.connect(connect_string)
-    cursor = stalmic.cursor()
-    stalmic.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
-    stalmic.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
-    stalmic.setencoding('utf-8')
-    picklist = getlists(filename)
-    cursor.execute("SELECT RouteNum, NoteID, NoteText FROM dbo.Note INNER JOIN dbo.Route ON RecordID = RouteID WHERE ModuleCode = 'Route' AND NoteText LIKE 'PICKUPS%'")
-    routes = cursor.fetchall()
-    route_notes = {}
-    for route in routes:
-        route_notes[route[0]] = []
-    for route in routes:
-        route_notes[route[0]].append([route[1], route[2]])
-    write_pickups(picklist, route_notes, cursor)
-    stalmic.close()
+    try:
+        loading = tk.Tk()
+        loading.title("Pick Ups To Notes")
+        loading.iconbitmap(os.getcwd() + '\putn.ico')
+        label = tk.Label(loading, text="Connecting. . .")
+        label.pack(side="top", fill="both", expand=True, padx=20, pady=20)
+        loading.update()
+        stalmic = pyodbc.connect(connect_string)
+        loading.destroy()
+    except pyodbc.Error:
+        loading.destroy()
+        error = "Could not connect to database."
+        tk.messagebox.showerror("Pick Ups To Notes", error)
+    else:
+        cursor = stalmic.cursor()
+        stalmic.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
+        stalmic.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
+        stalmic.setencoding('utf-8')
+        picklist = getlists(filename)
+        cursor.execute("SELECT RouteNum, NoteID, NoteText FROM dbo.Note INNER JOIN dbo.Route ON RecordID = RouteID WHERE ModuleCode = 'Route' AND NoteText LIKE 'PICKUPS%'")
+        routes = cursor.fetchall()
+        route_notes = {}
+        for route in routes:
+            route_notes[route[0]] = []
+        for route in routes:
+            route_notes[route[0]].append([route[1], route[2]])
+        write_pickups(picklist, route_notes, cursor)
+        stalmic.close()
 
 
 def get_routeIDs(cursor):
@@ -88,6 +101,7 @@ def write_pickups(picklist, route_notes, cursor):
         else:
             cursor.execute("INSERT INTO dbo.Note (ModuleCode, RecordID, NoteDate, NoteText, SendToDevice, AlwaysSendToDevice) VALUES ('Route', ?, '2000-01-01 00:00:00', ?, 1, 1)", (str(route_id_list[route]), notes[route]))
     cursor.commit()
+
 
 def get_config():
     if getattr(sys, 'frozen', False):
