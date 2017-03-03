@@ -33,6 +33,9 @@ def getlists(filename):
     except FileNotFoundError:
         error = "File was not found. Have you selected an Excel file?"
         tk.messagebox.showerror("Pick Ups To Notes", error)
+    except xlrd.biffh.XLRDError:
+        error = "This is not an Excel file. Please choose a different file."
+        tk.messagebox.showerror("Pick Ups To Notes", error)
     else:
         sheet = book.sheet_by_index(0)
         rows, cols = sheet.nrows, sheet.ncols
