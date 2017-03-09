@@ -14,7 +14,7 @@ def createpick(filename):
     try:
         loading = tk.Tk()
         loading.title("Pick Ups To Notes")
-        loading.iconbitmap(os.getcwd() + '\putn.ico')
+        loading.iconbitmap(getcwd() + '\putn.ico')
         label = tk.Label(loading, text="Connecting. . .")
         label.pack(side="top", fill="both", expand=True, padx=20, pady=20)
         loading.update()
@@ -113,11 +113,11 @@ def write_pickups(picklist, route_notes, cursor):
 
 def get_config():
     if getattr(sys, 'frozen', False):
-        application_path = os.path.dirname(sys.executable)
+        application_path = path.dirname(sys.executable)
     elif __file__:
-        application_path = os.path.dirname(__file__)
+        application_path = path.dirname(__file__)
 
-    config_path = os.path.join(application_path, 'config.cfg')
+    config_path = path.join(application_path, 'config.cfg')
 
     try:
         with open(config_path, 'r') as file:
