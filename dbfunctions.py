@@ -3,7 +3,7 @@ from convertpick import *
 from route_translation import route_translation
 import tkinter as tk
 from tkinter import messagebox
-import os
+from os import path, getcwd
 import sys
 import re
 

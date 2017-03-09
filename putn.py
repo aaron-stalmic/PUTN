@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
-import os
+from os import getcwd
 from gui import *
 
 root = tk.Tk()
