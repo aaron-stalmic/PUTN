@@ -8,6 +8,5 @@ route_translation = {
     'FWR': ['RS2 - FW', 'FL2 - FlaW', 'FL2 - FlaL'],
     'NFR': ['RS1 - NF', 'FL1 - GA-S/FL-N', 'FL1 - JAX'],
     'SCR': ['RS1 - SC', 'FL1 - SC', 'FL1 - SC+D&G'],
-    'SR': ['RS1 - SR', 'FL1 - GA Central Bi'],
-    'BR': ['zzTEST - ATL']
+    'SR': ['RS1 - SR', 'FL1 - GA Central Bi']
 }

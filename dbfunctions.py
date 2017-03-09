@@ -92,15 +92,23 @@ def write_pickups(picklist, route_notes, cursor):
                     notes[bm_route] += item[0] + "\r\n"
                     notes[bm_route] += item[1] + " - " + item[3] + "\r\n"
                     notes[bm_route] += item[4]
-    existing = check_existing(picklist, route_notes)
-    route_id_list = get_routeIDs(cursor)
-    for route in notes:
-        if route in existing:
-            for item in route_notes[route]:
-                cursor.execute("UPDATE dbo.Note SET NoteText = ? WHERE NoteID = ?", (notes[route], str(item[0])))
-        else:
-            cursor.execute("INSERT INTO dbo.Note (ModuleCode, RecordID, NoteDate, NoteText, SendToDevice, AlwaysSendToDevice) VALUES ('Route', ?, '2000-01-01 00:00:00', ?, 1, 1)", (str(route_id_list[route]), notes[route]))
-    cursor.commit()
+    confirm = "The following routes will be modified:\n"
+    for route in sorted(notes.keys()):
+        confirm += "\n %s: %i pick ups" % (route, len(notes[route].split('Pick Up - ')) - 1)
+    confirm += "\n\nClick OK to continue or Cancel to abort."
+    if not tk.messagebox.askokcancel("Pick Ups To Notes", confirm):
+        return
+    else:
+        existing = check_existing(picklist, route_notes)
+        route_id_list = get_routeIDs(cursor)
+        for route in notes:
+            if route in existing:
+                for item in route_notes[route]:
+                    cursor.execute("UPDATE dbo.Note SET NoteText = ? WHERE NoteID = ?", (notes[route], str(item[0])))
+            else:
+                cursor.execute("INSERT INTO dbo.Note (ModuleCode, RecordID, NoteDate, NoteText, SendToDevice, AlwaysSendToDevice) VALUES ('Route', ?, '2000-01-01 00:00:00', ?, 1, 1)", (str(route_id_list[route]), notes[route]))
+        cursor.commit()
+        tk.messagebox.showinfo("Pick Ups To Notes", "Route notes updated.")
 
 
 def get_config():
