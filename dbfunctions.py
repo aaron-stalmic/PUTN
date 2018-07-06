@@ -84,14 +84,17 @@ def write_pickups(picklist, route_notes, cursor):
             tk.messagebox.showwarning("Pick Ups To Notes", error)
             picklist.remove(pick)
         else:
+            print(pick.route)
             for bm_route in route_translation[pick.route]:
-                if bm_route not in notes and pick.list != []:
+                if bm_route not in notes:
+                    # and pick.list != []:
                     notes[bm_route] = "PICKUPS"
                 for item in pick.list:
                     notes[bm_route] += "\r\n\r\n"
                     notes[bm_route] += item[0] + "\r\n"
                     notes[bm_route] += item[1] + " - " + item[3] + "\r\n"
                     notes[bm_route] += item[4]
+                print(notes[bm_route])
     confirm = "The following routes will be modified:\n"
     for route in sorted(notes.keys()):
         confirm += "\n %s: %i pick ups" % (route, len(notes[route].split('Pick Up - ')) - 1)
