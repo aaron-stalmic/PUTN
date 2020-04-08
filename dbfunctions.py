@@ -109,7 +109,15 @@ def write_pickups(picklist, route_notes, cursor):
                 for item in route_notes[route]:
                     cursor.execute("UPDATE dbo.Note SET NoteText = ? WHERE NoteID = ?", (notes[route], str(item[0])))
             else:
-                cursor.execute("INSERT INTO dbo.Note (ModuleCode, RecordID, NoteDate, NoteText, SendToDevice, AlwaysSendToDevice) VALUES ('Route', ?, '2000-01-01 00:00:00', ?, 1, 1)", (str(route_id_list[route]), notes[route]))
+                try:
+                    cursor.execute("INSERT INTO dbo.Note (ModuleCode, RecordID, NoteDate, NoteText, SendToDevice, AlwaysSendToDevice) VALUES ('Route', ?, '2000-01-01 00:00:00', ?, 1, 1)", (str(route_id_list[route]), notes[route]))
+                except KeyError:
+                    error = "The route "
+                    error += route
+                    error += " in the route translation file is not valid."
+                    error += " This route will not be updated."
+                    error += "\n\nClick OK to continue."
+                    tk.messagebox.showwarning("Pick Ups To Notes", error)
         cursor.commit()
         tk.messagebox.showinfo("Pick Ups To Notes", "Route notes updated.")
 
